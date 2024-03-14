@@ -117,6 +117,11 @@ class TestDType(unittest.TestCase):
       assert dt is tin.dtype is tor.dtype, f"dtype mismatch: expected={dt} | tinygrad={tin.dtype} | torch={tor.dtype}"
       np.testing.assert_allclose(tin, tor, atol=1e-6, rtol=1e-3)
 
+  def test_resulting_item_match(self):
+    scalar = 43 if self.DTYPE != dtypes.bool else True
+    tin = Tensor(np.array([scalar], dtype=self.DTYPE.np)).item()
+    np.testing.assert_allclose(tin, scalar, atol=1e-6, rtol=1e-3)
+
 def _test_ops(a_dtype:DType, b_dtype:DType, target_dtype=None):
   target_dtype = target_dtype or least_upper_dtype(a_dtype, b_dtype)
   if not is_dtype_supported(a_dtype) or not is_dtype_supported(b_dtype) or not is_dtype_supported(target_dtype): return
